@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🚀 Ingestion Phase (Data Processing)\n**Goal:** Pull files, read content, and store as vector embeddings.\n\n👨‍💻 **Designed by:** Yousef El-Sherbiny\n🌐 **Contact:** https://yousefautomates.pages.dev\n\n📚 **What is RAG?**\nRetrieval-Augmented Generation combines document retrieval with AI generation for accurate, context-aware responses.",
+        "height": 280,
+        "width": 420,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "b6beb3c7-304f-497c-8270-6084b75f03c1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "⚠️ **Important Notice:**\nThis workflow is **for educational purposes only** to simplify RAG concepts for beginners.\n\n🛠️ **Needs Enhancement:** To be production-ready, additional improvements are required (will be covered in advanced tutorials).\n\n✅ **Current Status:** Fully functional for learning RAG fundamentals and basic implementation.\n\n🔐 **Security Note:** Ensure your credentials are properly configured for Google Drive, Supabase, and HuggingFace.",
+        "height": 284,
+        "width": 420,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "e87fd178-b9fc-4e1e-a973-4c34e115878d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "19EIou_ZCabdAaYU39qUy9_jqt5wqcmG6",
+          "mode": "list",
+          "cachedResultName": "RAG  2",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/19EIou_ZCabdAaYU39qUy9_jqt5wqcmG6"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        416
+      ],
+      "id": "f17dfe27-5b95-4777-bccd-0789d25f98f4",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cEDcJqgqi3EFTzJk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        96,
+        416
+      ],
+      "id": "09dbae3c-a380-47f7-bd65-23e12c74816d",
+      "name": "Download File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cEDcJqgqi3EFTzJk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        416
+      ],
+      "id": "12ff235f-fbdf-4f2f-ae05-cda6170f60fc",
+      "name": "Extract Text from PDF"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        416
+      ],
+      "id": "3167ff1b-79d5-4658-98c1-bfbd00e124aa",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "cIv5yu9Ob59iXzNy",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        560
+      ],
+      "id": "5351f9bc-df0b-4802-9c43-94b24b25385a",
+      "name": "Document Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 400,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        928,
+        720
+      ],
+      "id": "b3333c0b-de6c-405e-88bc-cf159bee2990",
+      "name": "Text Splitter"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        416,
+        768
+      ],
+      "id": "c992150d-471a-498c-8332-905f1716d81b",
+      "name": "Embedding Model (HuggingFace)",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "oysqM0hfbuz7L155",
+          "name": "FInal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 1️⃣ File Monitoring & Download\n**Function:** Monitors a Google Drive folder for new files.\n\n**Process:**\n- Checks every minute for new uploads\n- Triggers automatically when a file is added\n- Downloads the file for processing\n\n**Supported:** PDF files (can be extended to other formats)",
+        "height": 296,
+        "width": 280,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "9b89f558-9ebd-45bc-b9f2-76d099b6a8a9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### 2️⃣ Text Extraction\n**Function:** Converts PDF files into readable text.\n\n**Process:**\n- Extracts all text content from PDF\n- Maintains document structure\n- Prepares data for AI processing\n\n**Output:** Raw text ready for chunking",
+        "height": 260,
+        "width": 260,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "a98276e8-ebae-4f91-9d06-e77a8e55d902",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### 3️⃣ Vector Storage\n**Function:** Converts text to embeddings and stores in database.\n\n**Process:**\n- Text is split into 400-character chunks (50 char overlap)\n- Each chunk is converted to a vector embedding\n- Vectors are stored in Supabase for semantic search\n\n**Why Vectors?** Enables AI to find relevant content based on meaning, not just keywords.",
+        "height": 316,
+        "width": 340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "ad02a70e-7653-46c1-8288-b1e1bf09d357",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### 🔧 Configuration Notes\n\n**Text Splitter:**\n- Chunk Size: 400 chars (balanced for context)\n- Overlap: 50 chars (prevents context loss)\n\n**Embedding Model:**\n- intfloat/multilingual-e5-large\n- Supports multiple languages including Arabic\n\n**Customization:** Adjust chunk size based on your document type and use case.",
+        "height": 332,
+        "width": 300,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        528,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "a955e02c-cc92-40ea-8845-a88c3b5fce83",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### 📊 Workflow Summary\n\n**Input:** PDF files uploaded to Google Drive\n**Output:** Vector embeddings stored in Supabase\n**Next Step:** Part 2 - Retrieval & Query\n\n**Prerequisites:**\n✅ Google Drive API access\n✅ Supabase database with pgvector\n✅ HuggingFace API key",
+        "height": 232,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "29361c05-cd8d-4079-81a1-374e7a845a68",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## 🎥 Resources & Documentation\n\n### 📹 Video Tutorial\n**Watch the complete workflow build process:**\n\n🔗 **YouTube:** https://youtu.be/a2unzl4mNtA\n\n**What's covered:**\n✅ RAG System fundamentals\n✅ Step-by-step implementation\n✅ Best practices & optimization\n\n---\n\n### 💾 SQL Database Setup\n**Supabase database configuration code:**\n\n🔗 **GitHub Gist:** https://gist.github.com/YousefAutomates/25962e215fc54a8aa9c0231adc770078\n\n**Setup Required:**\n• Create Supabase project\n• Enable pgvector extension\n• Run the SQL script to create tables\n• Configure credentials in n8n\n\n💡 **Important:** Execute the SQL script before running this workflow!",
+        "height": 720,
+        "width": 544
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "40af84e8-0fce-4a26-8642-bb816202f3b8",
+      "name": "Sticky Note7"
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Extract Text from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text from PDF": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Document Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embedding Model (HuggingFace)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "ae4082182cecab7f29edeea239f28e83067c6d770dcea2233e5c21b0b16ac8a9"
+  }
+}
